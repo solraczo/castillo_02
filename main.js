@@ -55,7 +55,7 @@ function createColliderBox() {
 function loadAssets() {
     const loader = new THREE.GLTFLoader();
 
-    loader.load('models/castillo_02_05.gltf', (gltf) => {
+    loader.load('models/castillo_02_06.gltf', (gltf) => {
         const laberintoModel = gltf.scene;
         laberintoModel.scale.set(2, 2, 2);
         scene.add(laberintoModel);
