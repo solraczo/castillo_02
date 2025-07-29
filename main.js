@@ -48,7 +48,7 @@ function createColliderBox() {
     const geometry = new THREE.BoxGeometry(1, 2, 1);
     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, visible: false });
     colliderBox = new THREE.Mesh(geometry, material);
-    colliderBox.position.set(0, 0, 20);          // Aparece más al norte
+    colliderBox.position.set(0, 5, 50);          // Aparece más al norte
         scene.add(colliderBox);
 }
 
@@ -58,7 +58,7 @@ function loadAssets() {
 
     loader.load('models/castillo_02_12.gltf', (gltf) => {
         const laberintoModel = gltf.scene;
-        laberintoModel.scale.set(2, 2, 2);
+        laberintoModel.scale.set(1.5, 1.5, 1.5);
         scene.add(laberintoModel);
 
         laberintoModel.updateMatrixWorld(true);
@@ -81,7 +81,7 @@ function loadAssets() {
 
     loader.load('models/personaje001.gltf', (gltf) => {
         model = gltf.scene;
-        model.scale.set(0.8, 0.8, 0.8);
+        model.scale.set(1, 1, 1);
         model.position.copy(colliderBox.position);
         scene.add(model);
 
