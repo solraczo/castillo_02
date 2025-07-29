@@ -1,7 +1,7 @@
 let model, mixer, action;
-let colliderBox; // Cubo invisible que representa la colisión del personaje
+let colliderBox;
 let mazeColliders = [];
-let camera, scene, renderer;
+let camera, scene, renderer, controls;
 const keys = {};
 const clock = new THREE.Clock();
 
@@ -22,6 +22,8 @@ function init() {
     addLights();
     createGround();
     createColliderBox();
+    setupControls();
+    setupOrbitControls();
     loadAssets();
 }
 
@@ -48,21 +50,29 @@ function createColliderBox() {
     const geometry = new THREE.BoxGeometry(1, 2, 1);
     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, visible: false });
     colliderBox = new THREE.Mesh(geometry, material);
-    colliderBox.position.set(0, 5, 50);          // Aparece más al norte
-        scene.add(colliderBox);
+    colliderBox.position.set(0, 1, 5);
+    colliderBox.rotation.y = Math.PI; // Mira al sur
+    scene.add(colliderBox);
 }
 
+function setupOrbitControls() {
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.minDistance = 2;
+    controls.maxDistance = 30;
+    controls.enablePan = true;
+}
 
 function loadAssets() {
     const loader = new THREE.GLTFLoader();
 
     loader.load('models/castillo_02_12.gltf', (gltf) => {
         const laberintoModel = gltf.scene;
-        laberintoModel.scale.set(1.5, 1.5, 1.5);
+        laberintoModel.scale.set(2, 2, 2);
         scene.add(laberintoModel);
 
         laberintoModel.updateMatrixWorld(true);
-
         mazeColliders = [];
 
         laberintoModel.traverse((child) => {
@@ -72,7 +82,6 @@ function loadAssets() {
                 const box = child.geometry.boundingBox.clone().applyMatrix4(child.matrixWorld);
                 mazeColliders.push(box);
 
-                // Visual debug
                 const helper = new THREE.Box3Helper(box, 0xff0000);
                 scene.add(helper);
             }
@@ -81,7 +90,7 @@ function loadAssets() {
 
     loader.load('models/personaje001.gltf', (gltf) => {
         model = gltf.scene;
-        model.scale.set(1, 1, 1);
+        model.scale.set(0.8, 0.8, 0.8);
         model.position.copy(colliderBox.position);
         scene.add(model);
 
@@ -91,14 +100,12 @@ function loadAssets() {
             action.stop();
         }
     });
-
-    setupControls();
 }
 
 function setupControls() {
     window.addEventListener('keydown', (e) => {
         keys[e.code] = true;
-        if (e.code === 'KeyR') colliderBox.position.set(0, 1, -5);
+        if (e.code === 'KeyR') colliderBox.position.set(0, 1, 5);
     });
     window.addEventListener('keyup', (e) => keys[e.code] = false);
 
@@ -123,14 +130,6 @@ function checkCollision(newPos) {
     return false;
 }
 
-function updateCamera() {
-    if (!colliderBox) return;
-    const offset = new THREE.Vector3(0, 1.5, -3).applyQuaternion(colliderBox.quaternion);
-    const target = colliderBox.position.clone().add(offset);
-    camera.position.lerp(target, 0.1);
-    camera.lookAt(colliderBox.position.x, colliderBox.position.y + 1.2, colliderBox.position.z);
-}
-
 function animate() {
     requestAnimationFrame(animate);
     const delta = Math.min(clock.getDelta(), 0.1);
@@ -153,7 +152,6 @@ function animate() {
             }
         }
 
-        // Mueve el modelo visible al mismo lugar que el collider
         if (model) {
             model.position.copy(colliderBox.position);
             model.rotation.copy(colliderBox.rotation);
@@ -161,10 +159,13 @@ function animate() {
             if ((forward || left || right) && action && !action.isRunning()) action.play();
             if (!forward && !left && !right && action && action.isRunning()) action.stop();
         }
+
+        // Actualizar target de la cámara
+        if (controls) controls.target.copy(colliderBox.position);
     }
 
+    if (controls) controls.update();
     if (mixer) mixer.update(delta);
-    updateCamera();
     renderer.render(scene, camera);
 }
 
