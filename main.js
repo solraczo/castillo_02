@@ -48,7 +48,7 @@ function createColliderBox() {
     const geometry = new THREE.BoxGeometry(1, 2, 1);
     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, visible: false });
     colliderBox = new THREE.Mesh(geometry, material);
-    colliderBox.position.set(0, 1, 5);          // Aparece más al norte
+    colliderBox.position.set(0, 100, 0);          // Aparece más al norte
         scene.add(colliderBox);
 }
 
