@@ -45,12 +45,13 @@ function createGround() {
 }
 
 function createColliderBox() {
-    const geometry = new THREE.BoxGeometry(1, 2, 1); // Tamaño del personaje
+    const geometry = new THREE.BoxGeometry(1, 2, 1);
     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, visible: false });
     colliderBox = new THREE.Mesh(geometry, material);
-    colliderBox.position.set(0, 1, -5); // Altura y posición inicial
-    scene.add(colliderBox);
+    colliderBox.position.set(0, 1, 5);          // Aparece más al norte
+        scene.add(colliderBox);
 }
+
 
 function loadAssets() {
     const loader = new THREE.GLTFLoader();
