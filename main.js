@@ -50,7 +50,7 @@ function createColliderBox() {
     const geometry = new THREE.BoxGeometry(1, 2, 1);
     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, visible: false });
     colliderBox = new THREE.Mesh(geometry, material);
-    colliderBox.position.set(0, 1, 5);
+    colliderBox.position.set(0, 1, 50);
     colliderBox.rotation.y = Math.PI; // Mira al sur
     scene.add(colliderBox);
 }
@@ -90,7 +90,7 @@ function loadAssets() {
 
     loader.load('models/personaje001.gltf', (gltf) => {
         model = gltf.scene;
-        model.scale.set(0.8, 0.8, 0.8);
+        model.scale.set(1, 1, 1);
         model.position.copy(colliderBox.position);
         scene.add(model);
 
